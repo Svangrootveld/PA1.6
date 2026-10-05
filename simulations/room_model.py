@@ -19,5 +19,18 @@ def step_room(T: float, heater_on: int, T_out: float, R: float, C: float, P: flo
     # Hint: Use the Euler method to integrate the differential equation.
     # RC model: dT/dt = (T_out - T)/(R*C) + heater_on * P/C + noise
     
-    # --- Student code ends here ---
-    return 0.0 # remove when code is added
+    noise = 0.0
+    if process_sigma > 0.0:
+        if rng is not None:
+            if hasattr(rng, "normal"):
+                noise = rng.normal(0.0, process_sigma)
+            elif hasattr(rng, "gauss"):
+                noise = rng.gauss(0.0, process_sigma)
+            else:
+                raise AttributeError("rng must provide a normal() or gauss() method")
+
+    dT_dt = (T_out - T) / (R * C) + heater_on * P / C + noise
+    T_next = T + dT_dt * dt
+    return T_next
+    
+  
